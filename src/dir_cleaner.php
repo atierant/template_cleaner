@@ -13,7 +13,10 @@
  * @package 
  * @version 
  */
-class  
-{
 
-}
+require_once './src/autoload.php';
+
+$data = ezcBaseFile::findRecursive(
+"./src/examples"
+);
+var_dump( $data ); 
