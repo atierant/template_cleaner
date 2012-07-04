@@ -48,10 +48,17 @@ else{
         {
             // Try to delete the file
             $fileToDelete = $folder1.$value;
-            ezcBaseFile::removeRecursive($fileToDelete);
             
-            // Log
-            fputs($myDeletedFiles, $value."\n");
+            $success = unlink($fileToDelete);
+            switch ($success){
+            case TRUE:
+                // Log
+                fputs($myDeletedFiles, $value."\n");
+                break;
+            case FALSE:
+                fputs($myDeletedFiles, $value." NOT ERASED\n");
+                break;
+            }
         }
         
         // Close the log file
