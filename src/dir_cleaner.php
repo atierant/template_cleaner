@@ -46,8 +46,8 @@ else{
         // Removing files Recursively
         foreach($intersect as $value)
         {
+            // Try to delete the file
             $fileToDelete = $folder1.$value;
-            echo "\n\$fileToDelete vaut $fileToDelete\n";
             ezcBaseFile::removeRecursive($fileToDelete);
             
             // Log
