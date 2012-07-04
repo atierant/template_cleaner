@@ -16,32 +16,39 @@
 
 require_once './src/autoload.php';
 
-
-if( $argc<2 ) {
+if( $argc<3 ) {
     echo "\nUsage: {$argv[0]} folder1 folder2\n\n";
     exit(1);
 }
+else{
 
-$folder1 = $argv[1];
-$folder2 = $argv[2];
+    $folder1 = $argv[1];
+    $folder2 = $argv[2];
 
-if ( !is_dir($folder1) && !is_dir($folder2) ) {
-    echo "\nCould not open input folders : Folder 1 = $folder1 && Folder 2 = $folfder2\n\n";
-    exit(1);
-}else{
+    // Check input directories
+    if ( !is_dir($folder1) && !is_dir($folder2) ) {
+        echo "Error : Could not open at least one of input folders :\n - Folder 1 = $folder1\n - Folder 2 = $folder2\n\n";
+        exit(1);
+    }else{
 
-    $ezcFolder1 = ezcBaseFile::findRecursive(
-        $folder1,
-        array( "@./*.tpl$@" ),
-        array( '@/'.$folder2.'/@' ),
-        $stats
-    );
-    /*$ezcFolder2 = ezcBaseFile::findRecursive(
-        $folder2,
-        array( '.tpl$' )
-    );*/
+        // List of files in the first folder
+        $ezcFolder1 = ezcBaseFile::findRecursive(
+            $folder1
+        );
+        print_r($ezcFolder1);
+        
+        // List of files in the second folder
+        $ezcFolder2 = ezcBaseFile::findRecursive(
+            $folder2
+        );
+        print_r($ezcFolder2);
 
-    var_dump( $ezcFolder1 );
+        // Treat tables to remove path above
+        // ToDo
+        
+        // Intersect the two tables
+        $result = array_intersect($ezcFolder1, $ezcFolder2);
+        print_r($result);
+    }
 
-    echo ("There are ".$stats['count']." matching templates\n\n" );
 }
