@@ -1,0 +1,88 @@
+<?php
+/**
+ * @copyright
+ * @license 
+ * @version 
+ * @filesource
+ * @package 
+ */
+
+/**
+ * Desc
+ *
+ * @package 
+ * @version 
+ */
+
+require_once './src/autoload.php';
+
+if( $argc<3 ) {
+    echo "\nUsage: {$argv[0]} folder1 folder2\n\n";
+    exit(1);
+}
+else{
+
+    $folder1 = $argv[1];
+    $folder2 = $argv[2];
+    
+    // Check input directories
+    if ( !is_dir($folder1) && !is_dir($folder2) ) {
+        echo "Error : Could not open at least one of input folders :\n - Folder 1 = $folder1\n - Folder 2 = $folder2\n\n";
+        exit(1);
+    }else{
+
+       // List of files in the first folder
+        $ezcFolder1 = ezcBaseFile::findRecursive($folder1);
+        
+        // List of files in the second folder
+        $ezcFolder2 = ezcBaseFile::findRecursive($folder2);
+        
+        // Intersect the two tables
+        $intersect = array_intersect(str_replace($folder1, "", $ezcFolder1), str_replace($folder2, "", $ezcFolder2));
+        
+        // Log file containing deleted path
+        $myDeletedFiles = fopen(dirname(__FILE__).'/deleted_files.log', 'w+');
+
+        // Removing files Recursively
+        foreach($intersect as $value)
+        {
+            // Try to delete the file
+            $fileToDelete = $folder1.$value;
+            
+            $success = unlink($fileToDelete);
+            switch ($success){
+            case TRUE:
+                // Log
+                fputs($myDeletedFiles, $value."\n");
+                break;
+            case FALSE:
+                fputs($myDeletedFiles, $value." NOT ERASED\n");
+                break;
+            }
+        }
+        
+        // Close the log file
+        fclose($myDeletedFiles);
+    }
+}
+
+// Test if a folder is empty or not
+function is_emtpy_folder($folder){
+   if(is_dir($folder) ){
+       $handle = opendir($folder);
+       while( (gettype( $name = readdir($handle)) != "boolean")){
+               $name_array[] = $name;
+       }
+       foreach($name_array as $temp)
+           $folder_content .= $temp;
+
+       if($folder_content == "...")
+           return true;
+       else
+           return false;
+       
+       closedir($handle);
+   }
+   else
+       return true; // Le répertoire n'existe pas
+}
